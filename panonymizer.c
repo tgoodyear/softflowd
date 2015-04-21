@@ -13,7 +13,7 @@
 #include <mcrypt.h>
 
 //Anonymization funtion
-uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr) {
+uint32_t PAnonymizer_action(const char * key,const uint32_t orig_addr,int action) {
     
     char* IV = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
     int keysize = 32;
@@ -22,7 +22,7 @@ uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr) {
 
     buffer = calloc(1, buffer_len);
 
-    uint8_t m_pad[16] = {[0 ... 15] = 512};  //{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    uint8_t m_pad[16] = {[0 ... 15] = 0};
     uint8_t rin_output[16];
     uint8_t rin_input[16];
     memcpy(rin_input, m_pad, 16);
@@ -57,7 +57,12 @@ uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr) {
         }
         //Encryption: The Rijndael cipher is used as pseudorandom function. During each 
         //round, only the first bit of rin_output is used.
-        int r = encrypt(rin_output,buffer_len,IV,key,keysize);
+        int r;
+        if(action == 1) {
+            r = encrypt(rin_output,buffer_len,IV,key,keysize);
+        } else {
+            r = decrypt(rin_output,buffer_len,IV,key,keysize);
+        }
       	
         if(r != 0){
       		printf("Encrypt returned %d", r);
@@ -68,6 +73,14 @@ uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr) {
     }
     //XOR the orginal address with the pseudorandom one-time-pad
     return result ^ orig_addr;
+}
+
+uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr) {
+    return PAnonymizer_action(key,orig_addr,1);
+}
+
+uint32_t PAnonymizer_deanonymize(const char * key,const uint32_t orig_addr) {
+    return PAnonymizer_action(key,orig_addr,0);
 }
 
 // https://gist.github.com/bricef/2436364
@@ -107,13 +120,4 @@ int decrypt(
   mcrypt_module_close(td);
   
   return 0;
-}
- 
-
-void display(char* ciphertext, int len){
-  int v;
-  for (v=0; v<len; v++){
-    printf("%d ", ciphertext[v]);
-  }
-  printf("\n");
 }
