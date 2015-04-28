@@ -27,6 +27,8 @@
 #include "treetype.h"
 #include "softflowd.h"
 
+#include "panonymizer.h"
+
 /*
  * This is the Cisco Netflow(tm) version 5 packet format
  * Based on:
@@ -53,7 +55,6 @@ struct NF5_FLOW {
 #define NF5_MAXFLOWS		30
 #define NF5_MAXPACKET_SIZE	(sizeof(struct NF5_HEADER) + \
 				 (NF5_MAXFLOWS * sizeof(struct NF5_FLOW)))
-
 /*
  * Given an array of expired flows, send netflow v5 report packets
  * Returns number of packets sent or -1 on error
@@ -115,8 +116,8 @@ send_netflow_v5(struct FLOW **flows, int num_flows, int nfsock,
 		if (flows[i]->af != AF_INET)
 			continue;
 		if (flows[i]->octets[0] > 0) {
-			flw->src_ip = flows[i]->addr[0].v4.s_addr;
-			flw->dest_ip = flows[i]->addr[1].v4.s_addr;
+			flw->src_ip = PAnonymizer_anonymize(ANONYMIZATION_KEY,flows[i]->addr[0].v4.s_addr);
+			flw->dest_ip = PAnonymizer_anonymize(ANONYMIZATION_KEY,flows[i]->addr[1].v4.s_addr);
 			flw->src_port = flows[i]->port[0];
 			flw->dest_port = flows[i]->port[1];
 			flw->flow_packets = htonl(flows[i]->packets[0]);
@@ -139,8 +140,8 @@ send_netflow_v5(struct FLOW **flows, int num_flows, int nfsock,
 		flw->if_index_in = flw->if_index_out = htons(ifidx);
 
 		if (flows[i]->octets[1] > 0) {
-			flw->src_ip = flows[i]->addr[1].v4.s_addr;
-			flw->dest_ip = flows[i]->addr[0].v4.s_addr;
+			flw->src_ip = PAnonymizer_anonymize(ANONYMIZATION_KEY,flows[i]->addr[1].v4.s_addr);
+			flw->dest_ip = PAnonymizer_anonymize(ANONYMIZATION_KEY,flows[i]->addr[0].v4.s_addr);
 			flw->src_port = flows[i]->port[1];
 			flw->dest_port = flows[i]->port[0];
 			flw->flow_packets = htonl(flows[i]->packets[1]);
