@@ -11,7 +11,7 @@
 
 int main(int argc, char * argv[]) {
     // Provide your own 256-bit key here
-    unsigned char my_key[32] = "inncinncinncinncinncinncinncinnc";
+    unsigned char my_key[32] = ANONYMIZATION_KEY;
 
     FILE * f;
     unsigned int raw_addr, anonymized_addr, deanonymized_addr;
@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
     
     printf("Raw \t\tSanitized \tDe-Sanitized \t\tRaw Int \tAnon Int \tDe-Anon Int\n");
     //readin and handle each line of the input file
-    while  (fscanf(f, "%u %u.%u.%u.%u\n", &packet_size, &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4) != EOF) {
+    while  (fscanf(f, "%u.%u.%u.%u", &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4) != EOF) {
     	//fscanf(f, "%u", &packet_size);
 /*
         if(fscanf(f, "%d.%d.%d.%d", &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4) != 4){
