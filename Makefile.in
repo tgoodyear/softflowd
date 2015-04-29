@@ -29,7 +29,8 @@ SOFTFLOWD=softflowd.o log.o netflow1.o netflow5.o netflow9.o ipfix.o freelist.o
 
 all: $(TARGETS)
 
-sample${EXEEXT}: sample.o $(COMMON) $(CC) $(LDFLAGS) -o $@ sample.o $(COMMON) $(LIBS)
+sample${EXEEXT}: sample.o $(COMMON)
+	$(CC) $(LDFLAGS) -o $@ sample.o $(COMMON) $(LIBS)
 
 softflowd${EXEEXT}: ${SOFTFLOWD} $(COMMON)
 	$(CC) $(LDFLAGS) -o $@ ${SOFTFLOWD} $(COMMON) $(LIBS)
