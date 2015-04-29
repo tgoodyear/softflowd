@@ -31,10 +31,18 @@ int main(int argc, char * argv[]) {
     
     printf("Raw \t\tSanitized \tDe-Sanitized \t\tRaw Int \tAnon Int \tDe-Anon Int\n");
     //readin and handle each line of the input file
-    while  (fscanf(f, "%f", &packet_time) != EOF) {
-    	fscanf(f, "%u", &packet_size);
-        fscanf(f, "%u.%u.%u.%u", &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4);
-      
+    while  (fscanf(f, "%u %u.%u.%u.%u\n", &packet_size, &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4) != EOF) {
+    	//fscanf(f, "%u", &packet_size);
+/*
+        if(fscanf(f, "%d.%d.%d.%d", &orig_addr1, &orig_addr2, &orig_addr3, &orig_addr4) != 4){
+		printf("fscanf returned not 4");
+	}
+*/	/*
+	orig_addr1 = atoi(in_addr1);
+	orig_addr2 = atoi(in_addr2);
+	orig_addr3 = atoi(in_addr3);
+	orig_addr4 = atoi(in_addr4);
+      */
     	//convert the raw IP from a.b.c.d format into unsigned int format.
     	raw_addr = (orig_addr1 << 24) + (orig_addr2 << 16) + (orig_addr3 << 8) + orig_addr4;
 
