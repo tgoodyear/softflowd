@@ -13,7 +13,7 @@ CC=gcc
 LDFLAGS=
 CFLAGS=-g -O2
 CPPFLAGS=-I$(srcdir) 
-LIBS=-lpcap -lmcrypt 
+LIBS=-lpcap -lmcrypt
 EXEEXT=
 INSTALL=/usr/bin/install -c
 

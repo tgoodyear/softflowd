@@ -10,6 +10,6 @@
 #include <mcrypt.h>
 
 	uint32_t PAnonymizer_anonymize(const char * key,const uint32_t orig_addr);
-    MCRYPT td, td2;
+	MCRYPT td, td2;
 	
 #endif

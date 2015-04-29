@@ -13,7 +13,7 @@ CC=@CC@
 LDFLAGS=@LDFLAGS@
 CFLAGS=@CFLAGS@
 CPPFLAGS=-I$(srcdir) @CPPFLAGS@
-LIBS=@LIBS@
+LIBS=@LIBS@ -lmcrypt
 EXEEXT=@EXEEXT@
 INSTALL=@INSTALL@
 
@@ -22,12 +22,14 @@ CFLAGS+=-DFLOW_SPLAY		# Use splay tree for flows
 CFLAGS+=-DEXPIRY_RB		# Use red-black tree for expiry events
 #CFLAGS+=-DEXPIRY_SPLAY		# Use splay tree for expiry events
 
-TARGETS=softflowd${EXEEXT} softflowctl${EXEEXT}
+TARGETS=softflowd${EXEEXT} softflowctl${EXEEXT} sample${EXEEXT}
 
-COMMON=convtime.o strlcpy.o strlcat.o closefrom.o daemon.o
+COMMON=convtime.o strlcpy.o strlcat.o closefrom.o daemon.o panonymizer.o
 SOFTFLOWD=softflowd.o log.o netflow1.o netflow5.o netflow9.o ipfix.o freelist.o
 
 all: $(TARGETS)
+
+sample${EXEEXT}: sample.o $(COMMON) $(CC) $(LDFLAGS) -o $@ sample.o $(COMMON) $(LIBS)
 
 softflowd${EXEEXT}: ${SOFTFLOWD} $(COMMON)
 	$(CC) $(LDFLAGS) -o $@ ${SOFTFLOWD} $(COMMON) $(LIBS)
